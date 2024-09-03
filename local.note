@@ -1,0 +1,61 @@
+#Instalar AWS CLI (si no está ya instalado):
+
+pip install awscli
+
+#Configurar AWS CLI con tus credenciales de AWS:
+
+aws configure
+
+#Se te pedirá ingresar:
+#AWS Access Key ID
+#AWS Secret Access Key
+#Default region name (ejemplo: us-east-1)
+#Default output format (puedes dejarlo vacío o usar json)
+
+#Crear un nuevo directorio para tu proyecto:
+
+mkdir terraform-aws-vm
+cd terraform-aws-vm
+
+#Crear un archivo main.tf para la configuración principal de Terraform:
+
+# main.tf
+
+# Configurar el proveedor de AWS
+provider "aws" {
+  region = "us-east-1" # Cambia a tu región preferida
+}
+
+# Crear una clave SSH para acceder a la instancia
+resource "tls_private_key" "example" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "deployer_key" {
+  key_name   = "deployer-key"
+  public_key = tls_private_key.example.public_key_openssh
+}
+
+# Crear una instancia de EC2
+resource "aws_instance" "my_vm" {
+  ami           = "ami-0c55b159cbfafe1f0" # Cambia esto por la AMI que prefieras
+  instance_type = "t2.micro"
+
+  key_name = aws_key_pair.deployer_key.key_name
+
+  tags = {
+    Name = "TerraformExampleVM"
+  }
+}
+
+# Output para la dirección IP pública de la instancia
+output "instance_ip_addr" {
+  value = aws_instance.my_vm.public_ip
+}
+
+#Notas Adicionales
+#Permisos de IAM: Asegúrate de que la cuenta de AWS que estás utilizando tiene los permisos necesarios para crear instancias de EC2 y gestionar claves SSH.
+#Region y AMI: Cambia la región y la AMI de acuerdo a tus necesidades y disponibilidad en tu cuenta de AWS.
+#Seguridad: Mantén las claves y configuraciones de seguridad privadas y no las compartas públicamente.
+#Siguiendo estos pasos, podrás configurar Terraform para conectarse a AWS y crear una VM utilizando una service account.

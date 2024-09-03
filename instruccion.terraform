@@ -1,0 +1,25 @@
+Paso 3: Inicializar y Ejecutar Terraform
+Inicializar el proyecto de Terraform:
+
+bash
+Copiar código
+terraform init
+Validar el archivo de configuración de Terraform:
+
+bash
+Copiar código
+terraform validate
+Ver un plan de ejecución para crear la infraestructura:
+
+bash
+Copiar código
+terraform plan
+Aplicar los cambios para crear la infraestructura:
+
+bash
+Copiar código
+terraform apply
+Se te pedirá confirmar escribiendo yes.
+
+#VERIFICACION DE VM 
+terraform output instance_ip_addr
